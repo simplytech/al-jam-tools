@@ -22,8 +22,9 @@
 
 rule Step ( step_name : commands * )
 {
-  DebugVars step_name ;
-  DebugVars commands ;
+  DebugVars step_name : commands ;
+
+  step_common $(step_name) : $(commands) ;
 }
 
 actions Step

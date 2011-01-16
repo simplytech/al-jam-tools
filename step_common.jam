@@ -24,8 +24,6 @@ rule step_common ( step_name : commands * )
 {
   NotFiAl         $(step_name) ;
   BuildTargetsAdd $(step_name) ;
-
-  Step            $(step_name) : $(commands) ;
 }
 
 #=============================================================================#
