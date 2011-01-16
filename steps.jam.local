@@ -22,9 +22,9 @@
 
 rule Steps          
 {
-  step_common p1 : ls ;
-  step_common p2 : echo Hello ;
-  step_common p3 : echo Page 3 step ;
+  Step p1 : ls ;
+  Step p2 : echo Hello ;
+  Step p3 : echo Page 3 step ;
 }
 
 #=============================================================================#
