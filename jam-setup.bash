@@ -27,3 +27,33 @@ export JAMFILE=$TOP/makefile.jam
 echo TOP=$TOP
 echo JAMRULES=$JAMRULES
 echo JAMFILE=$JAMFILE
+
+# To rename Boost Jam from bjam to jam, however, jam already exists, so I renamed it to al-jam.
+# The name should not contain 'bjam' because they do a wildcard search on argv[0] to determine
+# if we want to run jam or bjam
+
+alias j='al-jam' 
+alias js='. ~/code/al-jam-tools/jam-setup.bash'
+
+# Execute a step at Page <n>
+# Example:
+#   p 4
+# will execute:
+#  rails new chapter-1
+
+p()
+{
+  al-jam -o .my-cmd.tmp "$@" && \
+  tail -n +2 .my-cmd.tmp > .my-cmd && \
+  chmod +x .my-cmd && \
+  .my-cmd
+}
+
+# Submit or check-in
+s()
+{
+  git commit -a -m "Page $@"
+  git tag "$@"
+  git push origin master
+}
+
