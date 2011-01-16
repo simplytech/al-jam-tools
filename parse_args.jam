@@ -1,0 +1,123 @@
+#*****************************************************************************#
+# File   : parse_args.jam                                                     #
+# Author : Alain Achkar                                                       #
+#                                                                             #
+#*****************************************************************************#
+
+#=============================================================================#
+#                 ***   G L O B A L   V A R I A B L E S   ***                 #
+#=============================================================================#
+
+#-----------------------------------------------------------------------------#
+#                             ParseArgsInitGlobals                            #
+#-----------------------------------------------------------------------------#
+rule ParseArgsInitGlobals
+{
+  BUILD_TARGETS_ALL   = ;
+
+  #BuildTargetsAdd p1 p2 p3 ;
+}
+
+#-----------------------------------------------------------------------------#
+#                              BuildTargetsAdd                              #
+#-----------------------------------------------------------------------------#
+rule BuildTargetsAdd ( targets + )
+{
+  BUILD_TARGETS_ALL += $(targets) ;
+}
+
+#=============================================================================#
+#                   ***   P S E U D O - T A R G E T S   ***                   #
+#=============================================================================#
+
+#=============================================================================#
+#       ***   R U L E   &   A C T I O N S   D E F I N I T I O N S   ***       #
+#=============================================================================#
+
+#-----------------------------------------------------------------------------#
+#                                  ParseArgs                                  #
+#-----------------------------------------------------------------------------#
+rule ParseArgs
+{
+  local saved-targets = [ UPDATE ] ;
+  local build-targets = ;
+
+  for local arg in $(ARGV) 
+    {
+      if $(arg) in $(BUILD_TARGETS_ALL)
+        {
+          build-targets += $(arg) ;
+        }
+    }
+
+  UPDATE $(build-targets) ;
+
+  # Collect command-line arguments (or options):
+  local cmd-line-args = ;
+  for arg in $(saved-targets)
+    {
+      if ! $(arg) in $(build-targets)
+        {
+          cmd-line-args += $(arg) ;
+        }
+    }
+
+  # OPT1         = $(cmd-line-args[1]) ;
+  # OPT2         = $(cmd-line-args[2]) ;
+  # OPT3         = $(cmd-line-args[3]) ;
+  # OPT4         = $(cmd-line-args[4]) ;
+
+  #GetOpts OPT1         : "OPT1"         : $(cmd-line-args) : 1 : TRUE  ;
+  #GetOpts OPT2         : "OPT2"         : $(cmd-line-args) : 2 : TRUE  ;
+  #GetOpts OPT3         : "OPT3"         : $(cmd-line-args) : 3 : TRUE  ;
+  #GetOpts OPT4         : "OPT4"         : $(cmd-line-args) : 4 : FALSE ;
+                                               
+
+  DebugVars saved-targets : "       " ;
+  DebugVars build-targets : "       " ;
+  DebugVars cmd-line-args : "       " ;
+
+  #Debug "OPT1:"          $(OPT1) ;
+  #Debug "OPT2:"          $(OPT2) ;
+  #Debug "OPT3:"          $(OPT3) ;
+  #Debug "OPT4:"          $(OPT4) ;
+}
+
+#-----------------------------------------------------------------------------#
+
+rule GetOpts ( var_name : string : cmd-line-args * : arg_index : mandatory )
+{
+  $(var_name) = $(cmd-line-args[$(arg_index)]) ;           # (global)
+
+  local var_value = $($(var_name)) ;
+
+  if $(mandatory) = TRUE
+    {
+      if ! $(var_value)
+        {
+          echo $(var_name) is empty! ;
+          echo Command was: ;
+          echo $(ARGV[1-]) ;
+          Usage ;
+          exit ;
+        }
+    }
+
+  DebugVars $(var_name) ;
+}
+
+
+#-----------------------------------------------------------------------------#
+#                                  ParseArgs                                  #
+#-----------------------------------------------------------------------------#
+rule Usage
+{
+  echo "Usage:                                                                    " ;
+  echo "                                                                          " ;
+}
+
+#=============================================================================#
+#                 ***   R U L E   I N V O C A T I O N S   ***                 #
+#=============================================================================#
+
+

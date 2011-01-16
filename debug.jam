@@ -1,0 +1,124 @@
+#*****************************************************************************#
+# File   : debug.jam                                                          #
+# Author : Alain Achkar                                                       #
+# Summary: Debugging rules                                                    #
+#*****************************************************************************#
+
+#=============================================================================#
+#       ***             G L O B A L   V A R I A B L E S      ***              #
+#=============================================================================#
+
+#=============================================================================# 
+#                   ***   P S E U D O - T A R G E T S   ***                   # 
+#=============================================================================# 
+
+#=============================================================================#
+#       ***   R U L E   &   A C T I O N S   D E F I N I T I O N S   ***       #
+#=============================================================================#
+
+rule Debug ( msg * : indentation * ) 
+{
+  if $(JAM_DEBUG)
+    {
+      if $(indentation) { echo $(JAM_DEBUG_PROMPT) $(indentation) $(msg) ; }
+      else              { echo $(JAM_DEBUG_PROMPT)                $(msg) ; }
+    }
+}
+
+#-----------------------------------------------------------------------------#
+
+rule DebugVars ( vars * : indentation * )
+{
+  for local v in $(vars)
+    {
+      if $(indentation) { Debug $(indentation) "$(v) =" $($(v)) ; }
+      else              { Debug                "$(v) =" $($(v)) ; }
+    }
+}
+
+#-----------------------------------------------------------------------------#
+
+rule DebugList ( list )
+{
+  Debug "$(list)" ;
+  Debug "{" ;
+  for local element in $($(list))
+    {
+      Debug "  " $(element) ;
+    }
+  Debug "}" ;
+}
+
+#-----------------------------------------------------------------------------#
+
+rule MyBackTrace ( msg_start * : msg_end * )
+{
+  if $(msg_start) { Debug $(msg_start) ; }
+
+  local backtrace_array = [ BACKTRACE ] ;
+  local indent = "." ;
+
+  while $(backtrace_array)
+    {
+      trace_filename = $(backtrace_array[1]) ; 
+      trace_line     = $(backtrace_array[2]) ;                                 
+      trace_module   = $(backtrace_array[3]) ;   
+      trace_rulename = $(backtrace_array[4]) ; 
+    
+      DebugVars trace_filename : $(indent) ;
+      DebugVars trace_line     : $(indent) ;
+      DebugVars trace_module   : $(indent) ;
+      DebugVars trace_rulename : $(indent) ;
+
+      backtrace_array = $(backtrace_array[5-]) ;
+      indent += "." ;
+    }
+
+  if $(msg_end)   { Debug $(msg_end)   ; }
+}
+
+
+#-----------------------------------------------------------------------------#
+#                                  unit_test                                  #
+#-----------------------------------------------------------------------------#
+
+rule unit_test ( testing_rule )
+{
+  if $(JAM_UNIT_TESTING)
+    {
+      Debug Unit testing $(testing_rule) ;
+      $(testing_rule) ;
+    }
+}
+
+#=============================================================================#
+#                 ***   R U L E   I N V O C A T I O N S   ***                 #
+#=============================================================================#
+
+#-----------------------------------------------------------------------------#
+#                                  tst_Debug                                  #
+#-----------------------------------------------------------------------------#
+
+rule tst_Debug ( )
+{
+  local my_var = 123 ;
+
+  local a = 1 ;
+  local b = 1 ;
+  local c = 1 ;
+  
+  Debug My debug message ;
+  Debug my_var is $(my_var) ;
+  DebugVars my_var ;
+  DebugVars  ;
+  DebugVars a b c ;
+
+#  MyBackTrace             ;
+#  MyBackTrace start       ;
+#  MyBackTrace       : end ;
+  MyBackTrace backtrace_start : backtract_end ;
+}
+
+unit_test tst_Debug ;
+    
+
