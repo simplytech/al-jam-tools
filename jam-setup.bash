@@ -52,8 +52,9 @@ p()
 # Submit or check-in
 s()
 {
-  git commit -a -m "Page $@"
-  git tag "$@"
+  git add .
+  git commit -m "Page $@"
+  git tag -f "$@"
   git push origin master
 }
 
