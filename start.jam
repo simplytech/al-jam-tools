@@ -20,6 +20,22 @@
 #       ***   R U L E   &   A C T I O N S   D E F I N I T I O N S   ***       #
 #=============================================================================#
 
+rule steps_include
+{
+  local .steps-file = [ find-to-root [ PWD ] : steps.jam ] ;
+  
+  if ! $(.steps-file)
+    {
+      echo "Unable to find \"steps.jam\"" ;
+      echo "Attempted search from" [ PWD ] "up to the root." ;
+      exit ;
+    }
+  else
+    {
+      jamfile_include $(.steps-file) : $(.steps-file:P) ;
+    }
+}
+
 #=============================================================================#
 #                 ***   R U L E   I N V O C A T I O N S   ***                 #
 #=============================================================================#
@@ -38,7 +54,8 @@ al_include step.jam          ;
 
 al_include step_common.jam   ;
 
-al_include steps.jam         ;
+#al_include steps.jam         ;
+steps_include ;
 
 # Command-line args
 

@@ -25,28 +25,33 @@ AL_TOOLS ?= [ FDirName $(TOP) ] ;
 #=============================================================================#
 
 #-----------------------------------------------------------------------------#
-#                                  al_include                                 #
+#                               jamfile_include                               #
 #-----------------------------------------------------------------------------#
 
-rule al_include ( jamfile )
+rule jamfile_include ( jamfile : dir )
 {
-  local jamfile_rooted  =  $(jamfile:R=$(AL_TOOLS)) ;
-
-  if $(JAM_DEBUG_INCLUDED_FILES)
-    {
-      echo "$(JAM_DEBUG_PROMPT) rules.jam: Including" $(jamfile_rooted) ;
-    }
+  local jamfile_rooted  =  $(jamfile:R=$(dir)) ;
 
   local file_found = [ GLOB $(jamfile_rooted:P) : $(jamfile:BS) ] ;
 
   if $(file_found)
     {
+      if $(JAM_DEBUG_INCLUDED_FILES)
+        {
+          echo "$(JAM_DEBUG_PROMPT) rules.jam: Including" $(jamfile_rooted) ;
+        }
+
       include $(jamfile_rooted) ;
     }
   else
     {
-      echo "Cannot find $(jamfile_rooted), make sure AL_TOOLS is set properly!" ;
+      exit "Cannot find $(jamfile_rooted)!" ; 
     }
+}
+
+rule al_include ( jamfile )
+{
+  jamfile_include $(jamfile) : $(AL_TOOLS) ;
 }
 
 #=============================================================================#
