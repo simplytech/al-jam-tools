@@ -21,8 +21,8 @@ export TOP=~/code/al-jam-tools
 export JAMRULES=$TOP/rules.jam
 export JAMFILE=$TOP/makefile.jam
 
-export JAM_DEBUG=1
-export JAM_DEBUG_INCLUDED_FILES=1
+#export JAM_DEBUG=1
+#export JAM_DEBUG_INCLUDED_FILES=1
    
 echo TOP=$TOP
 echo JAMRULES=$JAMRULES
