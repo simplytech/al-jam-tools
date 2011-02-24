@@ -31,7 +31,7 @@ actions Step
 {
   #echo actions Step: $(1) ;
   #echo actions Step: $(2) ;
-  echo bash\> $(2)
+  #echo "bash\> $(2)"
   $(2) ;
 }
 
@@ -52,9 +52,10 @@ rule sh ( step_name : commands * )
 actions sh
 {
 #!/usr/bin/env sh
-echo bash\> $(2)
+#echo "bash\> $(2)"
 $(2) ;
 }
+
 
 # sh interactive
 
@@ -67,14 +68,33 @@ rule shi ( step_name : commands * )
   JAMSHELL on $(step_name) = /bin/bash -i -c % ;
 }
 
-
-
 actions shi
 {
 #!/usr/bin/env sh
-echo bash\> $(2)
+#echo "bash\> $(2)"
 echo 'Press <ENTER> to execute the command or <Ctrl-C> to abort.'
 read x
+$(2) ;
+}
+
+
+#-----------------------------------------------------------------------------#
+#                                   rails                                     #
+#-----------------------------------------------------------------------------#
+
+# Rails commands
+rule rails ( step_name : commands * )
+{
+  DebugVars step_name : commands ;
+
+  step_common $(step_name) : $(commands) ;
+  
+  JAMSHELL on $(step_name) = $(PROJECT_ROOT)/$(RAILS_APP)/script/runner % ;
+}
+
+actions rails
+{
+#!/usr/bin/env $(PROJECT_ROOT)/$(RAILS_APP)/script/runner
 $(2) ;
 }
 

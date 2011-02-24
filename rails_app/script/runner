@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+path_to_rails = File.dirname(File.expand_path(__FILE__))
+exec("#{path_to_rails}/rails runner #{ARGV[0]}")
+
+# Use this script instead of 'rails runner' in a shebang (the suggestion in the help message for rails runner doesn't work).
+
+# Example:
+
+#!/usr/bin/env /path_to_my_rails_app/script/runner
+
+# Rails code here (Ruby code that runs in this app's Rails environment)
+
