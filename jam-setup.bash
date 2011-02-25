@@ -61,6 +61,11 @@ alias j='al-jam'
 # Execute commands on Page <n>
 p()
 {
+  # The 'tail' is needed because jam seems to generate an empty line at the beginning of the output file, which messes up the shebang processing, since shebang should be on the first line.  What this means is that we cannot use jam directly to execute stuff using JAMSHELL, instead we have to use this function.
+
+  # I would love to use -d0, but not only does it suppress debugging messages, it also does not generate any output using the -o to the output file!
+
+  #al-jam -d0 -o .my-cmd.tmp "$@"
   al-jam -o .my-cmd.tmp "$@" && \
   tail -n +2 .my-cmd.tmp > .my-cmd && \
   chmod +x .my-cmd && \
