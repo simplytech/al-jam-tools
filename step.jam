@@ -103,6 +103,33 @@ EOF
 $(2)
 }
 
+
+#-----------------------------------------------------------------------------#
+#                                   RFile                                     #
+#-----------------------------------------------------------------------------#
+
+rule RFile ( step_name : filename : commands * )
+{
+  DebugVars step_name : filename commands ;
+
+  step_common $(step_name) : $(filename) $(commands) ;
+  
+  JAMSHELL on $(step_name) = /usr/bin/evn ruby % ;
+  RUBY_CMDS on $(step_name) = $(commands) ;
+}
+
+actions RFile
+{
+#!/usr/bin/env ruby
+
+File::open("$(PROJECT_ROOT)/$(RAILS_APP)/$(2)", "w") do |f|
+  f << <<CMDS_HEREDOC
+$(RUBY_CMDS)
+CMDS_HEREDOC
+end
+}
+
+
 #=============================================================================#
 #                 ***   R U L E   I N V O C A T I O N S   ***                 #
 #=============================================================================#
